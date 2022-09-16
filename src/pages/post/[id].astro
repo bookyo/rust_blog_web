@@ -34,7 +34,7 @@ const json = await response.json();
         {isLogin && <a href={"/edit?id=" + json._id.$oid}>编辑</a>}
       </span>
       <h1 class="text-3xl">{json.title}</h1>
-      <div class="mt-4"  set:html={json.content}></div>
+      <div class="mt-4 break-all" set:html={json.content}></div>
     </div>
 	</main>
 </Layout>

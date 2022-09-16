@@ -1,18 +1,17 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { getToken, isLoggedIn } from '../utils/user';
-import config from '../../config';
-let token = '';
+import Layout from "../layouts/Layout.astro";
+import { getToken, isLoggedIn } from "../utils/user";
+import config from "../../config";
+let token = "";
 if (isLoggedIn(Astro.request)) {
-	token = getToken(Astro.request);
+  token = getToken(Astro.request);
 }
 ---
+
 <Layout title="发表页面">
   <section class="h-screen">
     <div class="px-6 h-full text-gray-800">
-      <div
-        class="flex justify-center flex-wrap h-full g-6"
-      >
+      <div class="flex justify-center flex-wrap h-full g-6">
         <div class="w-full mb-12 md:mb-0">
           <form>
             <!-- Email input -->
@@ -26,14 +25,15 @@ if (isLoggedIn(Astro.request)) {
                 placeholder="输入标题"
               />
             </div>
-  
+
             <!-- Password input -->
             <div class="mb-6">
               <div id="toolbar-container"></div>
               <div id="editor-container" class="prose max-w-none"></div>
-              <textarea id="textarea-1" style="display:none" name="content"></textarea>
+              <textarea id="textarea-1" style="display:none" name="content"
+              ></textarea>
             </div>
-  
+
             <div class="text-center lg:text-left">
               <button
                 type="button"
@@ -49,55 +49,61 @@ if (isLoggedIn(Astro.request)) {
     </div>
   </section>
   <script src="/waneditor.js" is:inline></script>
-  <link href="/waneditor.css" rel="stylesheet">
-  <script is:inline define:vars={{token, config}}>
+  <link href="/waneditor.css" rel="stylesheet" />
+  <style>
+    .w-e-text-container [data-slate-editor] pre > code {
+      background-color: var(--tw-prose-pre-bg);
+    }
+  </style>
+  <script is:inline define:vars={{ token, config }}>
     var E = window.wangEditor; // 全局变量
     const editor = E.createEditor({
-      selector: '#editor-container',
-      html: document.getElementById('textarea-1').value,
+      selector: "#editor-container",
+      html: document.getElementById("textarea-1").value,
       config: {
         MENU_CONF: {
           uploadImage: {
-            server: config.apiHost + '/upload',
-            allowedFileTypes: ['image/*'],
+            server: config.apiHost + "/upload",
+            allowedFileTypes: ["image/*"],
             headers: {
-              "Authorization": `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
             },
-          }
+          },
         },
-        placeholder: '输入描述内容',
+        placeholder: "输入描述内容",
         onChange: (editor) => {
-          const html = editor.getHtml()
-          document.getElementById('textarea-1').value = html
-        }},
-      mode: 'simple' // 或 'simple' 参考下文
-    })
+          const html = editor.getHtml();
+          document.getElementById("textarea-1").value = html;
+        },
+      },
+      mode: "simple", // 或 'simple' 参考下文
+    });
     // 创建工具栏
     const toolbar = E.createToolbar({
       editor,
-      selector: '#toolbar-container',
+      selector: "#toolbar-container",
       config: {},
-      mode: 'simple' // 或 'simple' 参考下文
-    })
-    var btn = document.getElementById('submit-button');
-    btn.onclick = function() {
+      mode: "simple", // 或 'simple' 参考下文
+    });
+    var btn = document.getElementById("submit-button");
+    btn.onclick = function () {
       fetch("/post.form", {
         method: "POST",
-        body: JSON.stringify({ 
-          title: document.getElementById('title').value, 
-          content: document.getElementById('textarea-1').value 
-        })
+        body: JSON.stringify({
+          title: document.getElementById("title").value,
+          content: document.getElementById("textarea-1").value,
+        }),
       })
-      .then((response) => response.json())
-      .then((gResponse) => {
-        if (gResponse.success) {
-          location = '/post/' + gResponse.id;
-          // Captcha verification was a success
-        } else {
-          alert(gResponse.message);
-          // Captcha verification failed
-        }
-      })
-    }
+        .then((response) => response.json())
+        .then((gResponse) => {
+          if (gResponse.success) {
+            location = "/post/" + gResponse.id;
+            // Captcha verification was a success
+          } else {
+            alert(gResponse.message);
+            // Captcha verification failed
+          }
+        });
+    };
   </script>
 </Layout>
