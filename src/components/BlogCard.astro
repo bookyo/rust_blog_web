@@ -1,0 +1,12 @@
+---
+import dayjs from 'dayjs';
+const { blog } = Astro.props;
+let content = blog.content.replace(/(<([^>]+)>)/ig, "");
+---
+
+<div class="w-full p-2">
+  <span class="text-sm text-slate-400">{dayjs(blog.created_at.$date.$numberLong * 1).format('DD/MM/YYYY')}</span>
+  <a class="text-sky-800 text-sm" href={"/post/" + blog._id.$oid}><h2 class="text-base font-semibold">{blog.title}</h2></a>
+  <p class="prose mt-2">{content.length > 100 ? content.slice(0,100) + '...' : content}</p>
+  <a class="text-sky-600 text-sm" href={"/post/" + blog._id.$oid}>点击阅读</a>
+</div>

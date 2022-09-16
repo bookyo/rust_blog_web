@@ -1,0 +1,41 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import config from '../../../config';
+import dayjs from 'dayjs';
+import { isLoggedIn } from '../../utils/user';
+let isLogin = false;
+if (isLoggedIn(Astro.request)) {
+	isLogin = true;
+}
+const id = Astro.params.id;
+const response = await fetch(
+config.apiHost + '/blog?id=' + id,
+{ method: "GET",
+  headers: {
+    "Content-Type": "application/json",
+  },
+}
+);
+const json = await response.json();
+---
+
+<Layout title={json.title + " - Yuebook Blog"}>
+	<main class="min-h-screen py-6">
+    <a class="flex items-center" href="/">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+      </svg>      
+      <span class="ml-2">返回首页</span>
+    </a>
+		
+		<div class="prose max-w-none mt-4">
+      <span class="text-slate-400">
+        {dayjs(json.created_at.$date.$numberLong * 1).format('DD/MM/YYYY')}
+        {isLogin && <a href={"/edit?id=" + json._id.$oid}>编辑</a>}
+      </span>
+      <h1 class="text-3xl">{json.title}</h1>
+      <div class="mt-4"  set:html={json.content}></div>
+    </div>
+	</main>
+</Layout>
+

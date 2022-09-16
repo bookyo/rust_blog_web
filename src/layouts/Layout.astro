@@ -1,0 +1,194 @@
+---
+import { isLoggedIn } from '../utils/user';
+export interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+let isLogin = false;
+if (isLoggedIn(Astro.request)) {
+	isLogin = true;
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<nav id="header" class="fixed w-full z-10 top-0">
+
+			<div id="progress" class="h-1 z-20 top-0" style="background:linear-gradient(to right, #4dc0b5 var(--scroll), transparent 0);"></div>
+	
+			<div class="w-full md:max-w-4xl mx-auto flex flex-wrap items-center justify-between mt-0 py-3">
+	
+				<div class="pl-4">
+					<a class="text-gray-900 no-underline hover:no-underline font-extrabold text-xl" href="/">
+						Yuebook Blog
+					</a>
+				</div>
+	
+				<div class="lg:hidden pr-4 flex items-center">
+					<button id="search-toggle" type="button" class="text-gray-500 w-8 h-8 -my-1 flex items-center justify-center hover:text-gray-600 lg:hidden dark:text-gray-400 dark:hover:text-gray-300">
+						<span class="sr-only">Search</span>
+						<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m19 19-3.5-3.5"></path><circle cx="11" cy="11" r="6"></circle></svg>
+					</button>
+					<button id="nav-toggle" class="flex items-center px-3 py-2 border rounded text-gray-500 border-gray-600 hover:text-gray-900 hover:border-green-500 appearance-none focus:outline-none">
+						<svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+							<title>Menu</title>
+							<path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+						</svg>
+					</button>
+				</div>
+
+				<div id="mobile-search" class="hidden items-center fixed top-0 z-50 w-full p-3 bg-white">
+          <form class='w-96' action="/search">
+            <input name="q" required type="text" class="w-full lg:flex items-center text-sm leading-6 text-gray-400 rounded-md ring-1 ring-gray-900/10 shadow-sm py-1.5 pl-4 pr-4 hover:ring-gray-300 dark:bg-gray-800 dark:highlight-white/5 dark:hover:bg-gray-700" placeholder='搜索' />
+          </form>
+          <svg id="close-search" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 m-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </div>
+
+				<div class="hidden lg:flex bg-white dark:bg-gray-900 relative pointer-events-auto w-96 ml-40">
+					<form class='w-full' action="/search">
+						<input type="text" name="q" class="w-full items-center text-sm leading-6 text-gray-400 rounded-md ring-1 ring-gray-900/10 shadow-sm py-1.5 pl-4 pr-4 hover:ring-gray-300 dark:bg-gray-800 dark:highlight-white/5 dark:hover:bg-gray-700" placeholder='搜索' />
+					</form>
+				</div>
+				
+				<div class="w-full flex-grow lg:items-center lg:w-auto hidden lg:block mt-2 lg:mt-0 bg-gray-100 md:bg-transparent z-20" id="nav-content">
+					<ul class="list-reset lg:flex justify-end flex-1 items-center">
+						<li class="mr-3">
+							<a class="inline-block py-2 px-4 text-gray-900 font-bold no-underline" href="/">首页</a>
+						</li>
+						{!isLogin ? (<li class="mr-3">
+							<a class="inline-block text-gray-600 no-underline hover:text-gray-900 hover:text-underline py-2 px-4" href="/login">登录</a>
+						</li>) : (<li class="mr-3">
+							<a class="inline-block text-gray-600 no-underline hover:text-gray-900 hover:text-underline py-2 px-4" href="/post">发表</a>
+						</li>)}
+					</ul>
+				</div>
+			</div>
+		</nav>
+	
+		<!--Container-->
+		<div class="container w-full md:max-w-3xl mx-auto pt-20">
+	
+			<div class="w-full px-4 md:px-6 text-xl text-gray-800 leading-normal">
+				<slot />
+			</div>
+	
+		</div>
+		<!--/container-->
+	
+		<footer class="bg-white border-t border-gray-400 shadow">
+			<div class="container max-w-4xl mx-auto flex py-8">
+	
+				<div class="w-full mx-auto flex flex-wrap">
+					<div class="flex w-full">
+						<div class="px-8">
+							<h3 class="font-bold text-gray-900">关于博客</h3>
+							<p class="py-4 text-gray-600 text-sm">
+								Yuebook Blog乃学习rust过程中编写的博客，用于记录日常开发中遇见的问题。
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>
+<script>
+	/* Progress bar */
+	//Source: https://alligator.io/js/progress-bar-javascript-css-variables/
+	var h = document.documentElement,
+		b = document.body,
+		st = 'scrollTop',
+		sh = 'scrollHeight',
+		progress = document.querySelector('#progress'),
+		scroll;
+	var scrollpos = window.scrollY;
+	var header = document.getElementById("header");
+	var navcontent = document.getElementById("nav-content");
+
+	document.addEventListener('scroll', function() {
+
+		/*Refresh scroll % width*/
+		scroll = (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight) * 100;
+		progress.style.setProperty('--scroll', scroll + '%');
+
+		/*Apply classes for slide in bar*/
+		scrollpos = window.scrollY;
+
+		if (scrollpos > 10) {
+			header.classList.add("bg-white");
+			header.classList.add("shadow");
+			navcontent.classList.remove("bg-gray-100");
+			navcontent.classList.add("bg-white");
+		} else {
+			header.classList.remove("bg-white");
+			header.classList.remove("shadow");
+			navcontent.classList.remove("bg-white");
+			navcontent.classList.add("bg-gray-100");
+
+		}
+
+	});
+
+	document.getElementById('search-toggle').onclick = function() {
+		document.getElementById("mobile-search").classList.remove("hidden");
+		document.getElementById("mobile-search").classList.add("flex");
+	}
+	document.getElementById('close-search').onclick = function() {
+		document.getElementById("mobile-search").classList.remove("flex");
+		document.getElementById("mobile-search").classList.add("hidden");
+	}
+	//Javascript to toggle the menu
+	document.getElementById('nav-toggle').onclick = function() {
+		document.getElementById("nav-content").classList.toggle("hidden");
+	}
+</script>
+<style>
+	:root {
+		--font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.19rem);
+		--font-size-lg: clamp(1.2rem, 0.7vw + 1.2rem, 1.5rem);
+		--font-size-xl: clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem);
+
+		--color-text: hsl(12, 5%, 4%);
+		--color-bg: hsl(10, 21%, 95%);
+		--color-border: hsl(17, 24%, 90%);
+	}
+
+	html {
+		font-family: system-ui, sans-serif, "Microsoft Yahei";
+		font-size: var(--font-size-base);
+		color: var(--color-text);
+		background-color: var(--color-bg);
+	}
+
+	body {
+		margin: 0;
+	}
+
+
+</style>
+
+<style is:global>
+	h1 {
+		font-size: var(--font-size-xl);
+	}
+
+	h2 {
+		font-size: var(--font-size-lg);
+	}
+
+	code {
+		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+			Bitstream Vera Sans Mono, Courier New, monospace;
+	}
+</style>

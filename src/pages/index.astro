@@ -1,0 +1,129 @@
+---
+import Layout from "../layouts/Layout.astro";
+import BlogCard from "../components/BlogCard.astro";
+import config from "../../config";
+let page = Astro.url.searchParams.get('page') || "1";
+let limit = 20;
+let prePage = parseInt(page) - 1 < 1 ? 0 : (parseInt(page) -1);
+let nextPage = parseInt(page) + 1;
+const response = await fetch(
+	config.apiHost + "/blogs?limit=" + limit + "&page=" + page,
+	{
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	}
+);
+const lists = await response.json();
+let haveMore = true;
+if(lists.length < limit) {
+	haveMore = false;
+}
+---
+
+<Layout title="Yuebook Blog">
+	<main>
+		<h1>欢迎来到 <span class="text-gradient">Yuebook blog</span></h1>
+		<p class="instructions bg-sky-800">
+			本博客乃学习Rust和Astro过程中编写的简易博客。
+		</p>
+		<div class="flex flex-wrap" id="content-box">
+			{lists.map((list) => <BlogCard blog={list} />)}
+		</div>
+		<div class="flex justify-between mt-5 mb-3 text-sm text-sky-700">
+			<a href={"?page=" + prePage} class:list={['flex justify-center items-center', { hidden: prePage == 0 }]}
+				><svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="w-4 h-4"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
+				</svg>
+				上一页</a
+			>
+			<div></div>
+			<a href={"?page=" + nextPage}
+				 class:list={['flex justify-center items-center', { hidden: !haveMore }]}>
+				下一页<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="w-4 h-4"
+			><path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path>
+		</svg></a
+			>
+		</div>
+	</main>
+</Layout>
+
+<style>
+	:root {
+		--astro-gradient: linear-gradient(0deg, #4f39fa, #da62c4);
+	}
+
+	h1 {
+		margin: 2rem 0;
+	}
+
+	main {
+		margin: auto;
+		padding: 1em;
+		max-width: 60ch;
+	}
+
+	.text-gradient {
+		font-weight: 900;
+		background-image: var(--astro-gradient);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-size: 100% 200%;
+		background-position-y: 100%;
+		border-radius: 0.4rem;
+		animation: pulse 4s ease-in-out infinite;
+	}
+
+	@keyframes pulse {
+		0%,
+		100% {
+			background-position-y: 0%;
+		}
+		50% {
+			background-position-y: 80%;
+		}
+	}
+
+	.instructions {
+		line-height: 1.6;
+		margin: 1rem 0;
+		background-color: rgb(7 89 133 / var(--tw-bg-opacity));
+		padding: 1rem;
+		border-radius: 0.4rem;
+		color: var(--color-bg);
+	}
+
+	.instructions code {
+		font-size: 0.875em;
+		border: 0.1em solid var(--color-border);
+		border-radius: 4px;
+		padding: 0.15em 0.25em;
+	}
+
+	.link-card-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
+		gap: 1rem;
+		padding: 0;
+	}
+</style>

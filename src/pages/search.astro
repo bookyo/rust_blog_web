@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+import config from '../../config';
+import BlogCard from '../components/BlogCard.astro';
+const q = Astro.url.searchParams.get('q');
+let limit = 20;
+let page = 1;
+const response = await fetch(
+config.apiHost + '/blogs?q=' + q + '&limit=' + limit + '&page=' + page,
+{ method: "GET",
+  headers: {
+    "Content-Type": "application/json",
+  },
+}
+);
+const lists = await response.json();
+---
+
+<Layout title={"搜索：" + q + " - Yuebook Blog"}>
+	<main class="h-screen py-6">
+    <a class="flex items-center" href="/">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+      </svg>      
+      <span class="ml-2">返回首页</span>
+    </a>
+    <div class="flex flex-wrap">
+      {lists.map((list) => (<BlogCard blog={list}></BlogCard>))}
+    </div>
+	</main>
+</Layout>
