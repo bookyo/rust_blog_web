@@ -64,6 +64,16 @@ const blog = await response.json();
   </section>
   <script src="/waneditor.js" is:inline></script>
   <link href="/waneditor.css" rel="stylesheet">
+  <style is:inline>
+    .w-e-text-container [data-slate-editor] pre > code {
+      background-color: var(--tw-prose-pre-bg);
+    }
+    #toolbar-container {
+      top: 80px;
+      position: sticky;
+      z-index: 1;
+    }
+  </style>
   <script is:inline define:vars={{token, config, id}}>
     var E = window.wangEditor; // 全局变量
     const editor = E.createEditor({
