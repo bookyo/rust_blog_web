@@ -54,6 +54,11 @@ if (isLoggedIn(Astro.request)) {
     .w-e-text-container [data-slate-editor] pre > code {
       background-color: var(--tw-prose-pre-bg);
     }
+    #toolbar-container {
+      top: 80px;
+      position: sticky;
+      z-index: 1;
+    }
   </style>
   <script is:inline define:vars={{ token, config }}>
     var E = window.wangEditor; // 全局变量
