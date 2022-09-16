@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import BlogCard from "../components/BlogCard.astro";
 import config from "../../config";
 let page = Astro.url.searchParams.get('page') || "1";
-let limit = 20;
+let limit = 10;
 let prePage = parseInt(page) - 1 < 1 ? 0 : (parseInt(page) -1);
 let nextPage = parseInt(page) + 1;
 const response = await fetch(
